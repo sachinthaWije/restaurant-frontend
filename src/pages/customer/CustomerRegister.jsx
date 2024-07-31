@@ -1,36 +1,48 @@
-import React from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Container, TextField, Button, Typography, Box } from '@mui/material';
-import AuthService from '../../services/auth.service';
+import React from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Container, TextField, Button, Typography, Box, Link } from "@mui/material";
+import AuthService from "../../services/auth.service";
 
 const CustomerRegister = () => {
   const formik = useFormik({
     initialValues: {
-      username: '',
-      email: '',
-      password: '',
-      phone:''
+      username: "",
+      email: "",
+      password: "",
+      phone: "",
     },
     validationSchema: Yup.object({
-      username: Yup.string().required('Username is required'),
-      password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-      email: Yup.string().email('Invalid email address').required('Email is required'),
-      phone: Yup.string().required('Mobile Number is required').matches(
-        /^(\+\d{1,3}[- ]?)?\d{10}$/,
-        'Mobile Number must be a valid phone number'
-      )
+      username: Yup.string().required("Username is required"),
+      password: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+      phone: Yup.string()
+        .required("Mobile Number is required")
+        .matches(
+          /^(\+\d{1,3}[- ]?)?\d{10}$/,
+          "Mobile Number must be a valid phone number"
+        ),
     }),
     onSubmit: (values) => {
-      AuthService.register(values.username, values.email,values.phone, values.password, 'ROLE_CUSTOMER')
-        .then(response => {
+      AuthService.register(
+        values.username,
+        values.email,
+        values.phone,
+        values.password,
+        "ROLE_CUSTOMER"
+      )
+        .then((response) => {
           // redirect to customer login
-          window.location.href = '/customer/login';
+          window.location.href = "/customer/login";
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
-    }
+    },
   });
 
   return (
@@ -82,9 +94,21 @@ const CustomerRegister = () => {
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
           />
-          <Button color="primary" variant="contained" fullWidth type="submit" sx={{ mt: 3 }}>
+          <Button
+            color="primary"
+            variant="contained"
+            fullWidth
+            type="submit"
+            sx={{ mt: 3 }}
+          >
             Register
           </Button>
+          <Typography variant="overline" display="block" gutterBottom textAlign={'right'}>
+            Already have an account?{" "}
+            <Link href="/customer/login" underline="none">
+              Sign In
+            </Link>
+          </Typography>
         </form>
       </Box>
     </Container>

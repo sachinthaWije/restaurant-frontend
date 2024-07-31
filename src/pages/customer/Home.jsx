@@ -4,13 +4,14 @@ import HeroSection from '../../components/HeroSection';
 import BestDishes from '../../components/BestDishes';
 import ReservationForm from '../../components/ReservationForm';
 import Footer from '../../components/Footer';
+import OurBranches from "../../components/OurBranches";
 
 const Home = () => {
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <HeroSection />
-      <BestDishes />
+      <OurBranches />
       <ReservationForm />
       <Footer />
     </>
