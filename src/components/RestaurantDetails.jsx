@@ -9,6 +9,11 @@ import {
   Button,
   MenuItem,
   Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -31,12 +36,26 @@ const initialValues = {
   reservationStatus: "PENDING",
   numberOfPeople: 1,
   tableId: "",
+  orderMenuItems: [],
+};
+
+const paymentInitialValues = {
+  reservationId: "",
+  amount: 0,
+  paymentDate: new Date().toISOString().slice(0, 10),
+  status: "PENDING",
+  paymentType: "",
 };
 
 const RestaurantDetails = () => {
   const { id } = useParams();
   const [branch, setBranch] = useState(null);
   const [tables, setTables] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [formData, setFormData] = useState(initialValues);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [reservationId, setReservationId] = useState(null);
+  const [paymentData, setPaymentData] = useState(paymentInitialValues);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,8 +65,24 @@ const RestaurantDetails = () => {
           `http://localhost:8090/restaurant/${id}`
         );
         setBranch(response.data);
+        console.log(response.data.menuIds);
+        const menuDetails = await fetchMenuDetails(response.data.menuIds);
+        setMenuItems(menuDetails);
       } catch (error) {
         console.error("Error fetching the restaurant details:", error);
+      }
+    };
+
+    const fetchMenuDetails = async (menuIds) => {
+      try {
+        const menuDetailsPromises = menuIds.map((menuId) =>
+          axios.get(`http://localhost:8090/menu/${menuId}`)
+        );
+        const menuDetailsResponses = await Promise.all(menuDetailsPromises);
+        return menuDetailsResponses.map((response) => response.data);
+      } catch (error) {
+        console.error("Error fetching menu details:", error);
+        return [];
       }
     };
 
@@ -66,19 +101,22 @@ const RestaurantDetails = () => {
   }, [id]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    const token = localStorage.getItem('jwtToken'); // Adjust this if your token is stored elsewhere
+    const token = localStorage.getItem("token"); // Adjust this if your token is stored elsewhere
+    console.log(token);
+    const restaurantId = id;
+
     if (!token) {
       alert("You must be logged in to make a reservation.");
-      navigate('/customer/login'); // Redirect to login page
+      navigate("/customer/login"); // Redirect to login page
       setSubmitting(false);
       return;
     }
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `http://localhost:8090/api/customer/reservation`,
         {
-          restaurantId: id,
+          restaurantId,
           ...values,
         },
         {
@@ -87,7 +125,10 @@ const RestaurantDetails = () => {
           },
         }
       );
-      alert("Reservation successful!");
+      console.log(response.data);
+      const reservationId = response.data.reservationId; // Assume the response contains the reservation ID
+      setReservationId(reservationId);
+      setPaymentData({ ...paymentData, reservationId, amount: totalPrice });
     } catch (error) {
       console.error("Error submitting reservation:", error);
       alert("Failed to make reservation.");
@@ -98,6 +139,42 @@ const RestaurantDetails = () => {
   if (!branch) {
     return <Typography>Loading...</Typography>;
   }
+
+  const handlePaymentChange = (e) => {
+    setPaymentData({
+      ...paymentData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:8090/payment", paymentData);
+      console.log("Payment submitted successfully:", paymentData);
+      alert("Reservation successful!");
+      
+    } catch (error) {
+      console.error("Error submitting payment:", error);
+    }
+  };
+
+  const handleMenuItemChange = (e) => {
+    const { value } = e.target;
+    const selectedItems = typeof value === "string" ? value.split(",") : value;
+    setFormData({
+      ...formData,
+      orderMenuItems: selectedItems,
+    });
+
+    // Calculate total price
+    const total = selectedItems.reduce((acc, itemName) => {
+      const item = menuItems.find((menuItem) => menuItem.name === itemName);
+      return acc + (item ? item.price : 0);
+    }, 0);
+
+    setTotalPrice(total);
+  };
 
   return (
     <Box
@@ -154,104 +231,191 @@ const RestaurantDetails = () => {
           borderRadius: 2,
         }}
       >
-        <Typography variant="h5" sx={{ marginBottom: 2 }}>
+        <Typography variant="h5" sx={{ marginBottom: 2, color: "#333" }}>
           Table Reservation
         </Typography>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={reservationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting, errors, touched }) => (
-            <Form>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    as={TextField}
-                    name="reservationDate"
-                    label="Reservation Date"
-                    type="date"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    error={touched.reservationDate && !!errors.reservationDate}
-                    helperText={
-                      touched.reservationDate && errors.reservationDate
-                    }
-                  />
+        {!reservationId ? (
+          <Formik
+            initialValues={formData}
+            validationSchema={reservationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting, errors, touched }) => (
+              <Form>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Field
+                      as={TextField}
+                      name="reservationDate"
+                      label="Reservation Date"
+                      type="date"
+                      fullWidth
+                      InputLabelProps={{ shrink: true }}
+                      error={
+                        touched.reservationDate && !!errors.reservationDate
+                      }
+                      helperText={
+                        touched.reservationDate && errors.reservationDate
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field
+                      as={TextField}
+                      name="reservationTime"
+                      label="Reservation Time"
+                      type="time"
+                      fullWidth
+                      InputLabelProps={{ shrink: true }}
+                      error={
+                        touched.reservationTime && !!errors.reservationTime
+                      }
+                      helperText={
+                        touched.reservationTime && errors.reservationTime
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field
+                      as={TextField}
+                      select
+                      name="reservationType"
+                      label="Reservation Type"
+                      fullWidth
+                      error={
+                        touched.reservationType && !!errors.reservationType
+                      }
+                      helperText={
+                        touched.reservationType && errors.reservationType
+                      }
+                    >
+                      <MenuItem value="DINE_IN">Dine In</MenuItem>
+                      <MenuItem value="TAKEAWAY">Takeaway</MenuItem>
+                    </Field>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Field
+                      as={TextField}
+                      name="numberOfPeople"
+                      label="Number of People"
+                      type="number"
+                      fullWidth
+                      error={touched.numberOfPeople && !!errors.numberOfPeople}
+                      helperText={
+                        touched.numberOfPeople && errors.numberOfPeople
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Field
+                      as={TextField}
+                      select
+                      name="tableId"
+                      label="Table No"
+                      fullWidth
+                      error={touched.tableId && !!errors.tableId}
+                      helperText={touched.tableId && errors.tableId}
+                    >
+                      {tables.map((table) => (
+                        <MenuItem key={table.tableId} value={table.tableId}>
+                          {table.tableNumber}
+                        </MenuItem>
+                      ))}
+                    </Field>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth required>
+                      <InputLabel>Menu Items</InputLabel>
+                      <Select
+                        multiple
+                        name="orderMenuItems"
+                        value={formData.orderMenuItems}
+                        onChange={handleMenuItemChange}
+                        renderValue={(selected) => selected.join(", ")}
+                      >
+                        {menuItems.map((item) => (
+                          <MenuItem key={item.id} value={item.name}>
+                            <Checkbox
+                              checked={
+                                formData.orderMenuItems.indexOf(item.name) > -1
+                              }
+                            />
+                            <ListItemText
+                              primary={`${item.name} - $${item.price}`}
+                            />
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <Typography
+                      variant="h6"
+                      style={{ marginTop: "20px", color: "#333" }}
+                    >
+                      Total Price: ${totalPrice.toFixed(2)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit Reservation"}
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    as={TextField}
-                    name="reservationTime"
-                    label="Reservation Time"
-                    type="time"
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                    error={touched.reservationTime && !!errors.reservationTime}
-                    helperText={
-                      touched.reservationTime && errors.reservationTime
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    as={TextField}
-                    select
-                    name="reservationType"
-                    label="Reservation Type"
-                    fullWidth
-                    error={touched.reservationType && !!errors.reservationType}
-                    helperText={
-                      touched.reservationType && errors.reservationType
-                    }
-                  >
-                    <MenuItem value="DINE_IN">Dine In</MenuItem>
-                    <MenuItem value="TAKEAWAY">Takeaway</MenuItem>
-                  </Field>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    as={TextField}
-                    name="numberOfPeople"
-                    label="Number of People"
-                    type="number"
-                    fullWidth
-                    error={touched.numberOfPeople && !!errors.numberOfPeople}
-                    helperText={touched.numberOfPeople && errors.numberOfPeople}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Field
-                    as={TextField}
-                    select
-                    name="tableId"
-                    label="Table ID"
-                    fullWidth
-                    error={touched.tableId && !!errors.tableId}
-                    helperText={touched.tableId && errors.tableId}
-                  >
-                    {tables.map((table) => (
-                      <MenuItem key={table.tableId} value={table.tableId}>
-                        {table.tableNumber}
-                      </MenuItem>
-                    ))}
-                  </Field>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit Reservation"}
-                  </Button>
-                </Grid>
-              </Grid>
-            </Form>
-          )}
-        </Formik>
+              </Form>
+            )}
+          </Formik>
+        ) : (
+          <form onSubmit={handlePaymentSubmit}>
+            <Typography variant="h6" style={{ marginTop: "20px" }}>
+              Proceed to Payment
+            </Typography>
+            <TextField
+              label="Amount"
+              name="amount"
+              type="number"
+              value={paymentData.amount}
+              onChange={handlePaymentChange}
+              required
+              fullWidth
+              disabled
+            />
+            <TextField
+              label="Payment Date"
+              name="paymentDate"
+              type="date"
+              value={paymentData.paymentDate}
+              onChange={handlePaymentChange}
+              required
+              fullWidth
+            />
+            <FormControl fullWidth required>
+              <InputLabel>Payment Type</InputLabel>
+              <Select
+                name="paymentType"
+                value={paymentData.paymentType}
+                onChange={handlePaymentChange}
+              >
+                <MenuItem value="CREDIT_CARD">Credit Card</MenuItem>
+                <MenuItem value="DEBIT_CARD">Debit Card</MenuItem>
+                <MenuItem value="PAYPAL">PayPal</MenuItem>
+                <MenuItem value="CASH">Cash</MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ marginTop: "20px" }}
+            >
+              Submit Payment
+            </Button>
+          </form>
+        )}
       </Box>
     </Box>
   );

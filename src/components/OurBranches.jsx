@@ -23,8 +23,8 @@ const OurBranches = () => {
     fetchBranches();
   }, []);
 
-  const handleBranchClick = (id) => {
-    navigate(`/restaurant/${id}`);
+  const handleBranchClick = (restaurantId) => {
+    navigate(`/restaurant/${restaurantId}`);
   };
 
   return (
