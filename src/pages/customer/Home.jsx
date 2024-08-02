@@ -12,7 +12,7 @@ const Home = () => {
       {/* <Navbar /> */}
       <HeroSection />
       <OurBranches />
-      <ReservationForm />
+      {/* <ReservationForm /> */}
       <Footer />
     </>
   );

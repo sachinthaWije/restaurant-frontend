@@ -101,8 +101,8 @@ const RestaurantDetails = () => {
   }, [id]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    values.orderMenuItems=formData.orderMenuItems
     const token = localStorage.getItem("token"); // Adjust this if your token is stored elsewhere
-    console.log(token);
     const restaurantId = id;
 
     if (!token) {
@@ -125,6 +125,7 @@ const RestaurantDetails = () => {
           },
         }
       );
+      console.log("values", values);
       console.log(response.data);
       const reservationId = response.data.reservationId; // Assume the response contains the reservation ID
       setReservationId(reservationId);
@@ -153,7 +154,6 @@ const RestaurantDetails = () => {
       await axios.post("http://localhost:8090/payment", paymentData);
       console.log("Payment submitted successfully:", paymentData);
       alert("Reservation successful!");
-      
     } catch (error) {
       console.error("Error submitting payment:", error);
     }
@@ -236,7 +236,7 @@ const RestaurantDetails = () => {
         </Typography>
         {!reservationId ? (
           <Formik
-            initialValues={formData}
+            initialValues={initialValues}
             validationSchema={reservationSchema}
             onSubmit={handleSubmit}
           >
@@ -257,6 +257,7 @@ const RestaurantDetails = () => {
                       helperText={
                         touched.reservationDate && errors.reservationDate
                       }
+                      
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -371,49 +372,56 @@ const RestaurantDetails = () => {
           </Formik>
         ) : (
           <form onSubmit={handlePaymentSubmit}>
-            <Typography variant="h6" style={{ marginTop: "20px" }}>
-              Proceed to Payment
-            </Typography>
-            <TextField
-              label="Amount"
-              name="amount"
-              type="number"
-              value={paymentData.amount}
-              onChange={handlePaymentChange}
-              required
-              fullWidth
-              disabled
-            />
-            <TextField
-              label="Payment Date"
-              name="paymentDate"
-              type="date"
-              value={paymentData.paymentDate}
-              onChange={handlePaymentChange}
-              required
-              fullWidth
-            />
-            <FormControl fullWidth required>
-              <InputLabel>Payment Type</InputLabel>
-              <Select
-                name="paymentType"
-                value={paymentData.paymentType}
-                onChange={handlePaymentChange}
-              >
-                <MenuItem value="CREDIT_CARD">Credit Card</MenuItem>
-                <MenuItem value="DEBIT_CARD">Debit Card</MenuItem>
-                <MenuItem value="PAYPAL">PayPal</MenuItem>
-                <MenuItem value="CASH">Cash</MenuItem>
-              </Select>
-            </FormControl>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              style={{ marginTop: "20px" }}
-            >
-              Submit Payment
-            </Button>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Amount"
+                  name="amount"
+                  type="number"
+                  value={paymentData.amount}
+                  onChange={handlePaymentChange}
+                  required
+                  fullWidth
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Payment Date"
+                  name="paymentDate"
+                  type="date"
+                  value={paymentData.paymentDate}
+                  onChange={handlePaymentChange}
+                  required
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <FormControl fullWidth required>
+                  <InputLabel>Payment Type</InputLabel>
+                  <Select
+                    name="paymentType"
+                    value={paymentData.paymentType}
+                    onChange={handlePaymentChange}
+                  >
+                    <MenuItem value="CREDIT_CARD">Credit Card</MenuItem>
+                    <MenuItem value="DEBIT_CARD">Debit Card</MenuItem>
+                    <MenuItem value="PAYPAL">PayPal</MenuItem>
+                    <MenuItem value="CASH">Cash</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  style={{ marginTop: "20px" }}
+                >
+                  Submit Payment
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         )}
       </Box>
