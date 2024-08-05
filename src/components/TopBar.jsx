@@ -30,6 +30,9 @@ const TopBar = () => {
     navigate('/customer/register');
     handleClose();
   };
+  const handleProfile = () => {
+    navigate('/userProfile');
+  };
 
 
   const handleLogout = () => {
@@ -94,6 +97,7 @@ const TopBar = () => {
             {isAuthenticated ? (
               <>
                 <MenuItem disabled>{userName}</MenuItem>
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </>
             ) : (
