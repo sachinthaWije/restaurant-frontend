@@ -23,6 +23,7 @@ import Home from "./pages/customer/Home";
 import { AuthProvider } from './context/AuthContext';
 import RestaurantDetails from "./components/RestaurantDetails";
 import UserProfile from "./pages/customer/UserProfile";
+import Query from "./pages/customer/Query";
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
             />
             <Route path="/restaurant/:id" element={<RestaurantDetails />} />
             <Route path="/userProfile" element={<UserProfile/>}/>
+            <Route path="/customer/query/:id" element={<Query />} />
 
             {/* Unauthorized Route */}
             <Route path="/unauthorized" element={<Unauthorized />} />

@@ -101,7 +101,7 @@ const RestaurantDetails = () => {
   }, [id]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    values.orderMenuItems=formData.orderMenuItems
+    values.orderMenuItems = formData.orderMenuItems;
     const token = localStorage.getItem("token"); // Adjust this if your token is stored elsewhere
     const restaurantId = id;
 
@@ -176,6 +176,10 @@ const RestaurantDetails = () => {
     setTotalPrice(total);
   };
 
+  const handleQuery = () => {
+    window.open(`/customer/query/${id}`,'_blank','noopener,noreferrer');
+  };
+
   return (
     <Box
       sx={{
@@ -205,7 +209,7 @@ const RestaurantDetails = () => {
         }}
       />
       <TopBar />
-      <Typography variant="h2" sx={{ marginBottom: 2 }}>
+      <Typography variant="h2" sx={{ mb: 2, mt:10 }}>
         {branch.location} Branch
       </Typography>
       <Box sx={{ marginBottom: 4 }}>
@@ -215,6 +219,14 @@ const RestaurantDetails = () => {
         <Typography variant="body1">
           Email: {branch.contactInfo.email}
         </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          onClick={handleQuery}
+        >
+          Ask Questions
+        </Button>
       </Box>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Facilities
@@ -257,7 +269,6 @@ const RestaurantDetails = () => {
                       helperText={
                         touched.reservationDate && errors.reservationDate
                       }
-                      
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
