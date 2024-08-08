@@ -102,7 +102,7 @@ const RestaurantDetails = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.orderMenuItems = formData.orderMenuItems;
-    const token = localStorage.getItem("token"); // Adjust this if your token is stored elsewhere
+    const token = localStorage.getItem("token"); 
     const restaurantId = id;
 
     if (!token) {

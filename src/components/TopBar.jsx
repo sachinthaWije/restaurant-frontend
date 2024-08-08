@@ -31,7 +31,7 @@ const TopBar = () => {
     handleClose();
   };
   const handleProfile = () => {
-    navigate('/userProfile');
+    navigate('/customer/dashboard');
   };
 
 
