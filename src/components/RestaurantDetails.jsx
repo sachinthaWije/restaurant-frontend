@@ -30,8 +30,8 @@ const reservationSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  reservationDate: "",
-  reservationTime: "",
+  reservationDate: new Date(),
+  reservationTime: new Date(),
   reservationType: "DINE_IN",
   reservationStatus: "PENDING",
   numberOfPeople: 1,
