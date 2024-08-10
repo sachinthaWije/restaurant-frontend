@@ -5,6 +5,7 @@ import BestDishes from '../../components/BestDishes';
 import ReservationForm from '../../components/ReservationForm';
 import Footer from '../../components/Footer';
 import OurBranches from "../../components/OurBranches";
+import AdvancedSearch from "../../components/AdvancedSearch";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       {/* <Navbar /> */}
       <HeroSection />
       <OurBranches />
+      <AdvancedSearch/>
       {/* <ReservationForm /> */}
       <Footer />
     </>
