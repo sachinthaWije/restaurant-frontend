@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   TextField,
@@ -13,6 +13,10 @@ import {
   CircularProgress,
   Alert,
   Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -21,6 +25,7 @@ const AdvancedSearch = () => {
     name: "",
     minPrice: "",
     maxPrice: "",
+    categoryName: "",
   });
   const [results, setResults] = useState([]);
   const [pagination, setPagination] = useState({
@@ -30,6 +35,21 @@ const AdvancedSearch = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:8090/category');
+      setCategories(response.data);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      setError('Failed to load categories. Please try again later.');
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +67,7 @@ const AdvancedSearch = () => {
           params: {
             ...searchParams,
             page,
-            size: 10,
+            size: 3,
           },
         }
       );
@@ -87,6 +107,26 @@ const AdvancedSearch = () => {
               value={searchParams.name}
               onChange={handleInputChange}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth variant="outlined">
+            <InputLabel>Category</InputLabel>
+            <Select
+              name="categoryName"
+              value={searchParams.categoryName}
+              onChange={handleInputChange}
+              label="Category"
+            >
+              <MenuItem value="">
+                <em>All Categories</em>
+              </MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.categoryId} value={category.categoryName}>
+                  {category.categoryName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           </Grid>
           <Grid item xs={6}>
             <TextField

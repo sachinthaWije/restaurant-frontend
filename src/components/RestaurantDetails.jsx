@@ -14,6 +14,8 @@ import {
   Select,
   Checkbox,
   ListItemText,
+  ImageListItem,
+  ImageList,
 } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -102,7 +104,7 @@ const RestaurantDetails = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.orderMenuItems = formData.orderMenuItems;
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
     const restaurantId = id;
 
     if (!token) {
@@ -177,7 +179,7 @@ const RestaurantDetails = () => {
   };
 
   const handleQuery = () => {
-    window.open(`/customer/query/${id}`,'_blank','noopener,noreferrer');
+    window.open(`/customer/query/${id}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -195,6 +197,7 @@ const RestaurantDetails = () => {
         textAlign: "center",
         position: "relative",
         zIndex: 1,
+        paddingTop:70
       }}
     >
       <Box
@@ -209,7 +212,7 @@ const RestaurantDetails = () => {
         }}
       />
       <TopBar />
-      <Typography variant="h2" sx={{ mb: 2, mt:10 }}>
+      <Typography variant="h2" sx={{ mb: 2, mt: 10 }}>
         {branch.location} Branch
       </Typography>
       <Box sx={{ marginBottom: 4 }}>
@@ -435,6 +438,23 @@ const RestaurantDetails = () => {
             </Grid>
           </form>
         )}
+      </Box>
+
+      <Box>
+        <Typography variant="h5" sx={{ marginBottom: 2, color: "#333" }}>
+          Photo Gallery
+        </Typography>
+        <ImageList sx={{ width: "100%", height: 450 }} cols={3} rowHeight={164}>
+          {branch.photoGallery.map((item, index) => (
+            <ImageListItem key={index}>
+              <img
+                src={`${item}`}
+                alt={`Gallery image ${index + 1}`}
+                loading="lazy"
+              />
+            </ImageListItem>
+          ))}
+        </ImageList>
       </Box>
     </Box>
   );
