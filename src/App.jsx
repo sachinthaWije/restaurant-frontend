@@ -33,6 +33,7 @@ import UserManagement from "./components/Admin/UserManagement";
 import AdminQueries from "./components/Admin/AdminQueries";
 import AdminDashboardLayout from "./components/Admin/AdminDashboardLayout";
 import AdminReservations from "./components/Admin/AdminReservations";
+import RestaurantForm from "./components/Admin/RestaurantForm";
 
 function App() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -72,6 +73,7 @@ function App() {
               <Route path="user-management" element={<UserManagement />} />
               <Route path="reservations" element={<AdminReservations />} />
               <Route path="queries" element={<AdminQueries />} />
+              <Route path="restaurant-form" element={<RestaurantForm />} />
             </Route>
 
             {/* Staff Routes */}
