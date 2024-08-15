@@ -55,6 +55,14 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
             </ListItem>
           </>
         )}
+        <ListItem key="Add Menus" disablePadding>
+          <ListItemButton component={Link} to="/admin/add-menu">
+            <ListItemIcon>
+              <BookOnlineIcon sx={{ color: "#c0c0c0" }} />
+            </ListItemIcon>
+            <ListItemText primary="Add Menus" />
+          </ListItemButton>
+        </ListItem>
         <ListItem key="Reservations" disablePadding>
           <ListItemButton component={Link} to="/admin/reservations">
             <ListItemIcon>
