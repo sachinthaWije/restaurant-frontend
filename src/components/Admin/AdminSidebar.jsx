@@ -17,6 +17,7 @@ import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import MailIcon from "@mui/icons-material/Mail";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 
 const drawerWidth = 240;
@@ -51,6 +52,14 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
                   <StorefrontIcon sx={{ color: "#c0c0c0" }} />
                 </ListItemIcon>
                 <ListItemText primary="Add Restaurant" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key="Create Menu Offers" disablePadding>
+              <ListItemButton component={Link} to="/admin/create-offer">
+                <ListItemIcon>
+                  <LocalOfferIcon sx={{ color: "#c0c0c0" }} />
+                </ListItemIcon>
+                <ListItemText primary="Create Menu Offers" />
               </ListItemButton>
             </ListItem>
           </>

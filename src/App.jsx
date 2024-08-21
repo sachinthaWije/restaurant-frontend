@@ -35,6 +35,7 @@ import AdminDashboardLayout from "./components/Admin/AdminDashboardLayout";
 import AdminReservations from "./components/Admin/AdminReservations";
 import RestaurantForm from "./components/Admin/RestaurantForm";
 import MenuCreate from "./components/Admin/MenuCreate";
+import CreateOffer from "./components/Admin/CreateOffer";
 
 function App() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -76,6 +77,7 @@ function App() {
               <Route path="queries" element={<AdminQueries />} />
               <Route path="restaurant-form" element={<RestaurantForm />} />
               <Route path="add-menu" element={<MenuCreate />} />
+              <Route path="create-offer" element={<CreateOffer />} />
             </Route>
 
             {/* Staff Routes */}
