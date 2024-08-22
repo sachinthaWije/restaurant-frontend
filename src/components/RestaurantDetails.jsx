@@ -16,6 +16,8 @@ import {
   ListItemText,
   ImageListItem,
   ImageList,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -59,6 +61,11 @@ const RestaurantDetails = () => {
   const [reservationId, setReservationId] = useState(null);
   const [paymentData, setPaymentData] = useState(paymentInitialValues);
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     const fetchBranchDetails = async () => {
@@ -108,7 +115,11 @@ const RestaurantDetails = () => {
     const restaurantId = id;
 
     if (!token) {
-      alert("You must be logged in to make a reservation.");
+      setSnackbar({
+        open: true,
+        message: "You must be logged in to make a reservation",
+        severity: "error",
+      });
       navigate("/customer/login"); // Redirect to login page
       setSubmitting(false);
       return;
@@ -134,7 +145,12 @@ const RestaurantDetails = () => {
       setPaymentData({ ...paymentData, reservationId, amount: totalPrice });
     } catch (error) {
       console.error("Error submitting reservation:", error);
-      alert("Failed to make reservation.");
+      
+      setSnackbar({
+        open: true,
+        message: "Failed to make reservation.",
+        severity: "error",
+      });
     }
     setSubmitting(false);
   };
@@ -155,9 +171,21 @@ const RestaurantDetails = () => {
     try {
       await axios.post("http://localhost:8090/payment", paymentData);
       console.log("Payment submitted successfully:", paymentData);
-      alert("Reservation successful!");
+      
+      setSnackbar({
+        open: true,
+        message: "Reservation successful!",
+        severity: "success",
+      });
+      window.location.reload();
     } catch (error) {
       console.error("Error submitting payment:", error);
+      
+      setSnackbar({
+        open: true,
+        message: "Error submitting payment. Please try again.",
+        severity: "error",
+      });
     }
   };
 
@@ -180,6 +208,13 @@ const RestaurantDetails = () => {
 
   const handleQuery = () => {
     window.open(`/customer/query/${id}`, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -456,6 +491,20 @@ const RestaurantDetails = () => {
           ))}
         </ImageList>
       </Box>
+
+      <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar.severity}
+            sx={{ width: "100%" }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
     </Box>
   );
 };

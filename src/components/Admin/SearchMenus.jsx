@@ -72,7 +72,8 @@ const SearchMenus = () => {
           },
         }
       );
-      setMenus(response.data.content);
+      console.log(response)
+      setMenus(response.data.contentDto);
       setTotalMenus(response.data.totalElements);
     } catch (error) {
       console.error("Error fetching menus:", error);
@@ -230,6 +231,7 @@ const SearchMenus = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Price</TableCell>
+                <TableCell>Offer Name</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -239,6 +241,7 @@ const SearchMenus = () => {
                   <TableCell>{menu.name}</TableCell>
                   <TableCell>{menu.description}</TableCell>
                   <TableCell>{menu.price}</TableCell>
+                  <TableCell>{menu.offerName ? menu.offerName : "No Offer"}</TableCell>
                   <TableCell>
                     <Button
                       variant="contained"

@@ -19,6 +19,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 const AdvancedSearch = () => {
   const [searchParams, setSearchParams] = useState({
@@ -43,11 +44,11 @@ const AdvancedSearch = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:8090/category');
+      const response = await axios.get("http://localhost:8090/category");
       setCategories(response.data);
     } catch (err) {
-      console.error('Error fetching categories:', err);
-      setError('Failed to load categories. Please try again later.');
+      console.error("Error fetching categories:", err);
+      setError("Failed to load categories. Please try again later.");
     }
   };
 
@@ -71,7 +72,8 @@ const AdvancedSearch = () => {
           },
         }
       );
-      setResults(response.data.content);
+      console.log(response);
+      setResults(response.data.contentDto);
       setPagination({
         currentPage: response.data.pageNumber,
         totalPages: response.data.totalPages,
@@ -110,23 +112,26 @@ const AdvancedSearch = () => {
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth variant="outlined">
-            <InputLabel>Category</InputLabel>
-            <Select
-              name="categoryName"
-              value={searchParams.categoryName}
-              onChange={handleInputChange}
-              label="Category"
-            >
-              <MenuItem value="">
-                <em>All Categories</em>
-              </MenuItem>
-              {categories.map((category) => (
-                <MenuItem key={category.categoryId} value={category.categoryName}>
-                  {category.categoryName}
+              <InputLabel>Category</InputLabel>
+              <Select
+                name="categoryName"
+                value={searchParams.categoryName}
+                onChange={handleInputChange}
+                label="Category"
+              >
+                <MenuItem value="">
+                  <em>All Categories</em>
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                {categories.map((category) => (
+                  <MenuItem
+                    key={category.categoryId}
+                    value={category.categoryName}
+                  >
+                    {category.categoryName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={6}>
             <TextField
@@ -182,14 +187,56 @@ const AdvancedSearch = () => {
               Results
             </Typography>
             <List>
-              {results.map((menu) => (
-                <ListItem key={menu.id} divider>
-                  <ListItemText
-                    primary={menu.name}
-                    secondary={`$${menu.price.toFixed(2)}`}
-                  />
-                </ListItem>
-              ))}
+              {results.map((menu) => {
+                const hasOffer = menu.offerName && menu.offerName.length > 0;
+                const discountedPrice = hasOffer
+                  ? menu.price * (1 - menu.discountPercentage / 100)
+                  : menu.price;
+
+                return (
+                  <ListItem key={menu.menuId} divider>
+                    <ListItemText
+                      primary={
+                        <>
+                          {menu.name}
+                          {hasOffer && (
+                            <LocalOfferIcon
+                              style={{ marginRight: 8, color: "#ff5722" }}
+                            />
+                          )}
+                        </>
+                      }
+                      secondary={
+                        <>
+                          {hasOffer ? (
+                            <>
+                              <Typography
+                                variant="body2"
+                                component="span"
+                                style={{
+                                  textDecoration: "line-through",
+                                  marginRight: 8,
+                                }}
+                              >
+                                ${menu.price.toFixed(2)}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                component="span"
+                                color="secondary"
+                              >
+                                ${discountedPrice.toFixed(2)}
+                              </Typography>
+                            </>
+                          ) : (
+                            `$${menu.price.toFixed(2)}`
+                          )}
+                        </>
+                      }
+                    />
+                  </ListItem>
+                );
+              })}
             </List>
             <Box mt={2} display="flex" justifyContent="center">
               <Pagination
