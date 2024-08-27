@@ -18,6 +18,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 
 const drawerWidth = 240;
@@ -60,6 +61,14 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
                   <LocalOfferIcon sx={{ color: "#c0c0c0" }} />
                 </ListItemIcon>
                 <ListItemText primary="Create Menu Offers" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key="Reservation Report" disablePadding>
+              <ListItemButton component={Link} to="/admin/reservation-report">
+                <ListItemIcon>
+                  <ReceiptIcon sx={{ color: "#c0c0c0" }} />
+                </ListItemIcon>
+                <ListItemText primary="Reservation Report" />
               </ListItemButton>
             </ListItem>
           </>

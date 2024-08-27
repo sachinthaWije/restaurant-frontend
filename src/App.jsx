@@ -36,7 +36,9 @@ import AdminReservations from "./components/Admin/AdminReservations";
 import RestaurantForm from "./components/Admin/RestaurantForm";
 import MenuCreate from "./components/Admin/MenuCreate";
 import CreateOffer from "./components/Admin/CreateOffer";
-
+import ReservationSearchPage from "./components/Admin/ReservationSearchPage";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 function App() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -45,15 +47,16 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
-        <Router>
-          <Routes>
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/register" element={<AdminRegister />} />
-            {/* <Route
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthProvider>
+          <Router>
+            <Routes>
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/register" element={<AdminRegister />} />
+              {/* <Route
               path="/admin/dashboard"
               element={
                 <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
@@ -61,81 +64,86 @@ function App() {
                 </ProtectedRoute>
               }
             /> */}
-            <Route
-              path="/admin/"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_ADMIN","ROLE_STAFF"]}>
-                  <AdminDashboardLayout
+              <Route
+                path="/admin/"
+                element={
+                  <ProtectedRoute allowedRoles={["ROLE_ADMIN", "ROLE_STAFF"]}>
+                    <AdminDashboardLayout
+                      handleDrawerToggle={handleDrawerToggle}
+                      mobileOpen={mobileOpen}
+                    />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="user-management" element={<UserManagement />} />
+                <Route path="reservations" element={<AdminReservations />} />
+                <Route path="queries" element={<AdminQueries />} />
+                <Route path="restaurant-form" element={<RestaurantForm />} />
+                <Route path="add-menu" element={<MenuCreate />} />
+                <Route path="create-offer" element={<CreateOffer />} />
+                <Route
+                  path="reservation-report"
+                  element={<ReservationSearchPage />}
+                />
+              </Route>
+
+              {/* Staff Routes */}
+              <Route path="/staff/login" element={<StaffLogin />} />
+              <Route path="/staff/register" element={<StaffRegister />} />
+              <Route
+                path="/staff/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["STAFF"]}>
+                    <StaffDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Customer Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/customer/login" element={<CustomerLogin />} />
+              <Route path="/customer/register" element={<CustomerRegister />} />
+              <Route
+                path="/customer/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["ROLE_CUSTOMER"]}>
+                    <UserDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/restaurant/:id" element={<RestaurantDetails />} />
+              <Route path="/userProfile" element={<UserProfile />} />
+              <Route path="/reservations" element={<ReservationHistory />} />
+              <Route path="/customer/query/:id" element={<Query />} />
+              {/* <Route path="/customer/dashboard" element={<UserDashboard />} /> */}
+              <Route
+                path="/"
+                element={
+                  <DashboardLayout
                     handleDrawerToggle={handleDrawerToggle}
                     mobileOpen={mobileOpen}
                   />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="user-management" element={<UserManagement />} />
-              <Route path="reservations" element={<AdminReservations />} />
-              <Route path="queries" element={<AdminQueries />} />
-              <Route path="restaurant-form" element={<RestaurantForm />} />
-              <Route path="add-menu" element={<MenuCreate />} />
-              <Route path="create-offer" element={<CreateOffer />} />
-            </Route>
-
-            {/* Staff Routes */}
-            <Route path="/staff/login" element={<StaffLogin />} />
-            <Route path="/staff/register" element={<StaffRegister />} />
-            <Route
-              path="/staff/dashboard"
-              element={
-                <ProtectedRoute allowedRoles={["STAFF"]}>
-                  <StaffDashboard />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Customer Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/customer/login" element={<CustomerLogin />} />
-            <Route path="/customer/register" element={<CustomerRegister />} />
-            <Route
-              path="/customer/dashboard"
-              element={
-                <ProtectedRoute allowedRoles={["ROLE_CUSTOMER"]}>
-                  <UserDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/restaurant/:id" element={<RestaurantDetails />} />
-            <Route path="/userProfile" element={<UserProfile />} />
-            <Route path="/reservations" element={<ReservationHistory />} />
-            <Route path="/customer/query/:id" element={<Query />} />
-            {/* <Route path="/customer/dashboard" element={<UserDashboard />} /> */}
-            <Route
-              path="/"
-              element={
-                <DashboardLayout
-                  handleDrawerToggle={handleDrawerToggle}
-                  mobileOpen={mobileOpen}
+                }
+              >
+                {/* <Route index element={<Dashboard />} /> */}
+                <Route
+                  path="reservation-history"
+                  element={<ReservationHistory />}
                 />
-              }
-            >
-              {/* <Route index element={<Dashboard />} /> */}
-              <Route
-                path="reservation-history"
-                element={<ReservationHistory />}
-              />
-              <Route path="profile-details" element={<ProfileDetails />} />
-              <Route path="queries" element={<QueryList />} />
-            </Route>
+                <Route path="profile-details" element={<ProfileDetails />} />
+                <Route path="queries" element={<QueryList />} />
+              </Route>
 
-            {/* Unauthorized Route */}
-            <Route path="/unauthorized" element={<Unauthorized />} />
+              {/* Unauthorized Route */}
+              <Route path="/unauthorized" element={<Unauthorized />} />
 
-            {/* Default Redirect */}
-            <Route path="*" element={<Navigate to="/customer/login" />} />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+              {/* Default Redirect */}
+              <Route path="*" element={<Navigate to="/customer/login" />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 }
 
