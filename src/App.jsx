@@ -39,6 +39,7 @@ import CreateOffer from "./components/Admin/CreateOffer";
 import ReservationSearchPage from "./components/Admin/ReservationSearchPage";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import AddMenusToRestaurant from "./components/Admin/AddMenusToRestaurant";
 function App() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -81,6 +82,7 @@ function App() {
                 <Route path="restaurant-form" element={<RestaurantForm />} />
                 <Route path="add-menu" element={<MenuCreate />} />
                 <Route path="create-offer" element={<CreateOffer />} />
+                <Route path="add-menu-to-restaurant" element={<AddMenusToRestaurant />} />
                 <Route
                   path="reservation-report"
                   element={<ReservationSearchPage />}

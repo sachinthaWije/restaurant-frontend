@@ -16,10 +16,9 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import MailIcon from "@mui/icons-material/Mail";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import StorefrontIcon from '@mui/icons-material/Storefront';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 
 const drawerWidth = 240;
 
@@ -71,14 +70,23 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
                 <ListItemText primary="Reservation Report" />
               </ListItemButton>
             </ListItem>
+            <ListItem key="Add Menus" disablePadding>
+              <ListItemButton component={Link} to="/admin/add-menu">
+                <ListItemIcon>
+                  <BookOnlineIcon sx={{ color: "#c0c0c0" }} />
+                </ListItemIcon>
+                <ListItemText primary="Add Menus" />
+              </ListItemButton>
+            </ListItem>
           </>
         )}
-        <ListItem key="Add Menus" disablePadding>
-          <ListItemButton component={Link} to="/admin/add-menu">
+
+        <ListItem key="Add Menus to Restaurant" disablePadding>
+          <ListItemButton component={Link} to="/admin/add-menu-to-restaurant">
             <ListItemIcon>
               <BookOnlineIcon sx={{ color: "#c0c0c0" }} />
             </ListItemIcon>
-            <ListItemText primary="Add Menus" />
+            <ListItemText primary="Add Menus to Restaurant" />
           </ListItemButton>
         </ListItem>
         <ListItem key="Reservations" disablePadding>

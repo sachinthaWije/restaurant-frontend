@@ -16,16 +16,16 @@ const Footer = () => {
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} sm={4}>
           <Typography variant="h6" gutterBottom>
-            DELICI RESTAURANT
+            ABC RESTAURANT
           </Typography>
           <Typography variant="body1">
-            Restaurant St, Delicious City, London 9578, UK
+            Restaurant St, Delicious City, Colombo.
           </Typography>
           <Typography variant="body1">
-            booking@domainname.com
+            booking@abc.com
           </Typography>
           <Typography variant="body1">
-            +88-123-123456
+            +9477 112 2345
           </Typography>
           <Typography variant="body1">
             Open: 09:00 am - 01:00 pm

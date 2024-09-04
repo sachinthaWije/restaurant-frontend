@@ -37,6 +37,10 @@ const RestaurantList = () => {
     severity: "success",
   });
 
+  const [openMenus, setOpenMenus] = useState(false);
+  const [menus, setMenus] = useState([]);
+  const [restaurantName, setRestaurantName] = useState("");
+
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
@@ -120,7 +124,9 @@ const RestaurantList = () => {
         message: "Table created!",
         severity: "success",
       });
-      const updatedTables = await axios.get(`http://localhost:8090/tables/${selectedRestaurantId}`);
+      const updatedTables = await axios.get(
+        `http://localhost:8090/tables/${selectedRestaurantId}`
+      );
       setTables(updatedTables.data);
     } catch (error) {
       console.error("Error creating table:", error);
@@ -136,6 +142,25 @@ const RestaurantList = () => {
       return;
     }
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleViewMenus = async (restaurant) => {
+    try {
+      const menuPromises = restaurant.menuIds.map(menuId =>
+        fetch(`http://localhost:8090/menu/${menuId}`).then(res => res.json())
+      );
+      const menuData = await Promise.all(menuPromises);
+      setMenus(menuData);
+      setOpenMenus(true);
+      setRestaurantName(restaurant.name+" "+ restaurant.location);
+    } catch (error) {
+      console.error('Error fetching menus:', error);
+    }
+  };
+
+  const handleCloseMenus = () => {
+    setOpenMenus(false);
+    setRestaurantName("");
   };
 
   return (
@@ -175,6 +200,9 @@ const RestaurantList = () => {
                   onClick={() => handleOpenDialog(restaurant.restaurantId)}
                 >
                   Create Table
+                </Button>
+                <Button size="small" color="primary" onClick={()=>handleViewMenus(restaurant)}>
+                  View Menus
                 </Button>
               </CardActions>
             </Card>
@@ -226,6 +254,24 @@ const RestaurantList = () => {
           </Button>
           <Button onClick={handleSubmit} color="primary">
             Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openMenus} onClose={handleCloseMenus}>
+        <DialogTitle>{`Menus for ${restaurantName}`}</DialogTitle>
+        <DialogContent>
+          <List>
+            {
+            menus.map((menu, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={menu.name} />
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseMenus} color="primary">
+            Close
           </Button>
         </DialogActions>
       </Dialog>

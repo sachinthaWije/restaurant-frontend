@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required('Username is required'),
-  password: Yup.string().required('Password is required'),
+  // password: Yup.string().required('Password is required'),
   email: Yup.string().email('Invalid email format').required('Email is required'),
   phone: Yup.string().required('Phone number is required'),
   role: Yup.string().required('Role is required'),
@@ -17,7 +17,7 @@ const validationSchema = Yup.object().shape({
 const StaffForm = ({ restaurants, onSubmit }) => {
   return (
     <Formik
-      initialValues={{ username: '', password: '', email: '', phone: '', role: 'ROLE_ADMIN', restaurant: '' }}
+      initialValues={{ username: '', email: '', phone: '', role: 'ROLE_ADMIN', restaurant: '' }}
       validationSchema={validationSchema}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         const token = localStorage.getItem('token');
@@ -30,7 +30,6 @@ const StaffForm = ({ restaurants, onSubmit }) => {
         try {
           await axios.post(`http://localhost:8090/api/auth/register/staff/${values.restaurant}`, {
             username: values.username,
-            password: values.password,
             role: values.role,
             email: values.email,
             phone: values.phone,
@@ -60,7 +59,7 @@ const StaffForm = ({ restaurants, onSubmit }) => {
             error={touched.username && Boolean(errors.username)}
             helperText={touched.username && errors.username}
           />
-          <Field
+          {/* <Field
             as={TextField}
             fullWidth
             name="password"
@@ -69,7 +68,7 @@ const StaffForm = ({ restaurants, onSubmit }) => {
             margin="normal"
             error={touched.password && Boolean(errors.password)}
             helperText={touched.password && errors.password}
-          />
+          /> */}
           <Field
             as={TextField}
             fullWidth
